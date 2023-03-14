@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaclimb.music.dao.CommentMapper">
+    <resultMap id="BaseResultMap" type="com.javaclimb.music.domain.Comment">  <!--resultMap id="BaceResultMap 可以引用id-->
+        <id column="id" jdbcType="INTEGER" property="id"/><!-- 上面包 jdbcType：表示数据库中的字段类型  column 数据库的属性    property：指id的属性   -->
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="song_id" jdbcType="INTEGER" property="songId"/>
+        <result column="song_list_id" jdbcType="INTEGER" property="songListId"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="up" jdbcType="INTEGER" property="up"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,user_id,type,song_id,song_list_id,content,create_time,up
+    </sql>
+
+    <insert id="insert" parameterType="com.javaclimb.music.domain.Comment">
+        insert into comment
+        /*prefix 前面要加的 suffix：后面要加的 prefixOverrides 前面要去掉那些东西 suffixOverrides后面要去掉哪些东西*/
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="songId != null">
+                song_id,
+            </if>
+            <if test="songListId != null">
+                song_list_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            create_time,
+            <if test="up != null">
+                up,
+            </if>
+        </trim>
+        <trim prefix=" values(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="songId != null">
+                #{songId},
+            </if>
+            <if test="songListId != null">
+                #{songListId},
+            </if>
+            <if test="content != null">
+                #{content},
+            </if>
+            now(),
+            <if test="up != null">
+                #{up},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.javaclimb.music.domain.Comment" >
+        update comment
+        <set>
+            <if test="userId != null">
+              user_id=#{userId},
+            </if>
+            <if test="type != null">
+                type=#{type},
+            </if>
+            <if test="songId != null">
+                song_id=#{songId},
+            </if>
+            <if test="songListId != null">
+                song_list_id=#{songListId},
+            </if>
+            <if test="content != null">
+                content=#{content},
+            </if>
+            <if test="up != null">
+                up=#{up},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete" parameterType="com.javaclimb.music.domain.Comment">
+        delete from comment where id=#{id}
+    </delete>
+
+    <!--查询一条数据-->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+       select
+       <include refid="Base_Column_List"/>
+       from comment where id=#{id}
+    </select>
+    <!--查询所有歌手-->
+    <select id="allComment" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from comment
+    </select>
+    <!--查询某个歌曲去所有的评论-->
+    <select id="commentOfSongId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from comment
+        where song_id=#{songId}
+    </select>
+    <!--查询某个歌单所有的评论-->
+    <select id="commentOfSongListId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from comment
+        where song_list_id=#{songListId}
+    </select>
+
+</mapper>

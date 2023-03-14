@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaclimb.music.dao.ListSongMapper">
+    <resultMap id="BaseResultMap" type="com.javaclimb.music.domain.ListSong">  <!--resultMap id="BaceResultMap 可以引用id-->
+    <id column="id" jdbcType="INTEGER" property="id"/><!-- 上面包 jdbcType：表示数据库中的字段类型  column 数据库的属性    property：指id的属性   -->
+    <result column="song_id" jdbcType="INTEGER" property="songId"/>
+    <result column="song_list_id" jdbcType="INTEGER" property="songListId"/>
+</resultMap>
+     <!--因为lyric 太长 需要的时候就查询-->
+    <sql id="Blob_Column_List">
+      id,song_id,song_list_id
+    </sql>
+    
+    <insert id="insert" parameterType="com.javaclimb.music.domain.ListSong">
+        insert into list_song
+        /*prefix 前面要加的 suffix：后面要加的 prefixOverrides 前面要去掉那些东西 suffixOverrides后面要去掉哪些东西*/
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            /*test= 的值是传过来的值*/
+            <if test="songId!= null">
+                song_id,
+            </if>
+            <if test="songListId != null">
+                song_list_id,
+            </if>
+
+        </trim>
+        <trim prefix=" values(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="songId!= null">
+                #{songId},
+            </if>
+            <if test="songListId != null">
+                #{songListId},
+            </if>
+
+        </trim>
+    </insert>
+
+
+    <delete id="delete" parameterType="com.javaclimb.music.domain.ListSong">
+        delete from list_song where id=#{id}
+    </delete>
+
+    <!--查询一条数据-->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+       select
+       <include refid="Blob_Column_List"/>
+       from list_song where id=#{id}
+    </select>
+    <!--查询所有歌手-->
+    <select id="allListSong" resultMap="BaseResultMap">
+        select
+        <include refid="Blob_Column_List"/>
+        from list_song
+    </select>
+    <!--跟据歌单id查询-->
+    <select id="listSongOfSongListId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Blob_Column_List"/>
+        from list_song
+        where song_list_id=#{songListId}
+    </select>
+
+</mapper>

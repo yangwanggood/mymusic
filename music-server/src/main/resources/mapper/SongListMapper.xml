@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaclimb.music.dao.SongListMapper">
+    <resultMap id="BaseResultMap" type="com.javaclimb.music.domain.SongList">  <!--resultMap id="BaceResultMap 可以引用id-->
+    <id column="id" jdbcType="INTEGER" property="id"/><!-- 上面包 jdbcType：表示数据库中的字段类型  column 数据库的属性    property：指id的属性   -->
+    <result column="title" jdbcType="VARCHAR" property="title"/>
+    <result column="pic" jdbcType="VARCHAR" property="pic"/>
+    <result column="style" jdbcType="VARCHAR" property="style"/>
+</resultMap>
+
+    <resultMap id="ResultMapWithBLOBs" type="com.javaclimb.music.domain.SongList" extends="BaseResultMap">  <!--resultMap id="BaceResultMap 可以引用id-->
+        <result column="introduction" jdbcType="LONGVARCHAR" property="introduction"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,title,pic,style,introduction
+    </sql>
+    <sql id="Blob_Column_List">
+        id,title,pic,style
+    </sql>
+    <insert id="insert" parameterType="com.javaclimb.music.domain.SongList">
+        insert into song_list
+        /*prefix 前面要加的 suffix：后面要加的 prefixOverrides 前面要去掉那些东西 suffixOverrides后面要去掉哪些东西*/
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            /*test= 的值是传过来的值*/
+            <if test="title!= null">
+                title,
+            </if>
+            <if test="pic != null">
+                pic,
+            </if>
+            <if test="introduction != null">
+                introduction,
+            </if>
+            <if test="style != null">
+                style,
+            </if>
+        </trim>
+        <trim prefix=" values(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="title!= null">
+                #{title},
+            </if>
+            <if test="pic != null">
+                #{pic},
+            </if>
+            <if test="introduction != null">
+                #{introduction},
+            </if>
+            <if test="style != null">
+                #{style},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.javaclimb.music.domain.SongList" >
+        update song_list
+        <set>
+            <if test="title!= null">
+                title= #{title},
+            </if>
+            <if test="pic != null">
+                pic=#{pic},
+            </if>
+            <if test="introduction != null">
+                introduction=#{introduction},
+            </if>
+            <if test="style != null">
+                style=#{style},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete" parameterType="com.javaclimb.music.domain.SongList">
+        delete from song_list where id=#{id}
+    </delete>
+
+    <!--查询一条数据-->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+       select
+       <include refid="Base_Column_List"/>
+       from song_list where id=#{id}
+    </select>
+    <!--查询所有歌手-->
+    <select id="allSongList" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        from song_list
+    </select>
+    <!--根据歌手的名字模糊查询列表  #{name}-->
+    <select id="songListOfTitle" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from song_list
+        where title = #{title}
+    </select>
+    <!--根据标题模糊查询-->
+    <select id="likeTitle" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from song_list
+        where title like "%"#{title}"%"
+    </select>
+    <!--根据风格的模糊查询-->
+    <select id="likeStyle" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from song_list
+        where style like "%"#{style}"%"
+    </select>
+
+</mapper>

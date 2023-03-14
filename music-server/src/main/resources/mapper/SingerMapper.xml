@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaclimb.music.dao.SingerMapper">
+    <resultMap id="BaseResultMap" type="com.javaclimb.music.domain.Singer">  <!--resultMap id="BaceResultMap 可以引用id-->
+        <id column="id" jdbcType="INTEGER" property="id"/><!-- 上面包 jdbcType：表示数据库中的字段类型  column 数据库的属性    property：指id的属性   -->
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="sex" jdbcType="TINYINT" property="sex"/>
+        <result column="pic" jdbcType="VARCHAR" property="pic"/>
+        <result column="birth" jdbcType="TIMESTAMP" property="birth"/>
+        <result column="location" jdbcType="VARCHAR" property="location"/>
+        <result column="introduction" jdbcType="VARCHAR" property="introduction"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,name,sex,pic,birth,location,introduction
+    </sql>
+
+    <insert id="insert" parameterType="com.javaclimb.music.domain.Singer">
+        insert into singer
+        /*prefix 前面要加的 suffix：后面要加的 prefixOverrides 前面要去掉那些东西 suffixOverrides后面要去掉哪些东西*/
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="pic != null">
+                pic,
+            </if>
+            <if test="birth != null">
+                birth,
+            </if>
+            <if test="location != null">
+                location,
+            </if>
+            <if test="introduction != null">
+                introduction,
+            </if>
+        </trim>
+        <trim prefix=" values(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="sex != null">
+                #{sex},
+            </if>
+            <if test="pic != null">
+                #{pic},
+            </if>
+            <if test="birth != null">
+                #{birth},
+            </if>
+            <if test="location != null">
+                #{location},
+            </if>
+            <if test="introduction != null">
+                #{introduction},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.javaclimb.music.domain.Singer" >
+        update singer
+        <set>
+            <if test="name != null">
+              name=#{name},
+            </if>
+            <if test="sex != null">
+                sex=#{sex},
+            </if>
+            <if test="pic != null">
+                pic=#{pic},
+            </if>
+            <if test="birth != null">
+                birth=#{birth},
+            </if>
+            <if test="location != null">
+                location=#{location},
+            </if>
+            <if test="introduction != null">
+                introduction=#{introduction},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete" parameterType="com.javaclimb.music.domain.Singer">
+        delete from singer where id=#{id}
+    </delete>
+
+    <!--查询一条数据-->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+       select
+       <include refid="Base_Column_List"/>
+       from singer where id=#{id}
+    </select>
+    <!--查询所有歌手-->
+    <select id="allSinger" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from singer
+    </select>
+    <!--根据歌手的名字模糊查询列表  #{name}-->
+    <select id="SingerOfName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from singer
+        where name like "%"#{name}"%"
+    </select>
+    <!--跟据性别查询-->
+    <select id="SingerOfSex" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from singer
+        where sex=#{sex}
+    </select>
+
+</mapper>
